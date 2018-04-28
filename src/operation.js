@@ -40,22 +40,34 @@ function getForecast(city, callback) {
 }
 
 suite.only("operations")
+
 function fetchCurrentCity() {
-  const operation={};
+  const operation={
+    successReactions:[],
+      errorReactions:[]
+  };
    getCurrentCity(function (error,result) {
        if(error){
-           operation.onError(result);
+          operation.errorReactions.forEach(r=>r(error));
            return;
        }
-       operation.onSuccess(result);
+       operation.successReactions.forEach(r=>r(result));
    });
 
    operation.setCallbacks = function setCallbacks(onSuccess,onError) {
-       operation.onSuccess=onSuccess;
-       operation.onError=onError;
+       operation.successReactions.push(onSuccess);
+       operation.errorReactions.push(onError);
    };
    return operation;
 }
+test("pass multiple callbacks- all of tehm to be called",function(done){
+    const operation=fetchCurrentCity();
+    const multiDone = callDone(done).afterTwoCalls();
+
+    operation.setCallbacks(result => multiDone());
+    operation.setCallbacks(result => multiDone());
+
+});
 
 test("fetchCurrentCity pass callbacks later on",function(){
   const operation=fetchCurrentCity();
