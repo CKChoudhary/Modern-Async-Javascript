@@ -1,6 +1,6 @@
 suite.skip("Mocha with QUnit interface and expect (separate library) assertions - examples");
 
-test("Passing test", function () {
+test("Passing test!!!", function () {
   expect(true).toBe(true);
 });
 
